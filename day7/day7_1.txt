@@ -1,0 +1,55 @@
+$ cd /
+$ ls
+dir a
+14848514 b.txt
+8504156 c.dat
+dir d
+$ cd a
+$ ls
+dir e
+29116 f
+2557 g
+62596 h.lst
+$ cd e
+$ ls
+584 i
+$ cd ..
+$ cd ..
+$ cd d
+$ ls
+4060174 j
+8033020 d.log
+5626152 d.ext
+7214296 k
+dir srlvzvr
+dir vtdvdgdv
+$ cd srlvzvr
+$ ls
+dir dlp
+274123 whc.cjc
+$ cd dlp
+$ ls
+dir rfpgt
+$ cd rfpgt
+$ ls
+281038 jvbb.mnq
+312481 mmjcgss
+186883 vdpq.qzn
+194336 wvjrhdq.llv
+$ cd ..
+$ cd ..
+$ cd ..
+$ cd vtdvdgdv
+$ ls
+dir rfb
+dir tjtccqtm
+$ cd rfb
+$ ls
+196456 dprdjqnp.wqc
+67720 psm.lsv
+820 rfb.jrh
+170351 tpc
+$ cd ..
+$ cd tjtccqtm
+$ ls
+269007 bsrvltnf
