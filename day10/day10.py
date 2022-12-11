@@ -92,4 +92,7 @@ def day10_2(data_list):
     # return sub_total
     for x in image_list:
         # print(len(x))
-        print(x)
+        # print(x)
+        print("")
+        for y in x:
+            print(y, end=" ")
