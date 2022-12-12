@@ -131,3 +131,5 @@ dmypy.json
 Java/out/*
 **/.idea/*
 **/.DS_Store
+
+python/dayx/**
