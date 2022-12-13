@@ -73,7 +73,3 @@ def read_file_array_of_array(file_name):
 
 
 
-
-
-
-

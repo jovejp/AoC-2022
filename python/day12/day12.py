@@ -174,34 +174,20 @@ class Day12:
         print(result_list[0])
 
 
-def compare(char_1, char_2):
-    if char_1 >= char_2:
-        return True
-    elif ord(char_2) - ord(char_1) == 1:
-        return True
-    else:
-        return False
+
 
 
 if __name__ == '__main__':
     # P1
     print("p1 sample")
-    tmp_list_1_s = read_file_array("day12_1_s.txt")
-    p1_s = Day12(tmp_list_1_s)
-    p1_s.run()
+    tmp_list_1_s = read_file_array("day13_1_s.txt")
 
     print("p1 production")
-    tmp_list = read_file_array("day12.txt")
-    p1 = Day12(tmp_list)
-    p1.run()
+    tmp_list = read_file_array("day13.txt")
 
-    # # P2
+    # P2
     print("p2 sample")
-    tmp_list_2_s = read_file_array("day12_1_s.txt")
-    p2_s = Day12(tmp_list_2_s)
-    p2_s.p2_run()
-    #
+    tmp_list_2_s = read_file_array("day13_1_s.txt")
+
     print("p2 production")
-    tmp_list = read_file_array("day12.txt")
-    p2 = Day12(tmp_list)
-    p2.p2_run()
+    tmp_list = read_file_array("day13.txt")
