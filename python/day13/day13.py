@@ -47,14 +47,14 @@ def compare_list(left, right):
     return result_value
 
 
-def customer_compare(a, b):
+def custom_compare(a, b):
     if compare_list(a, b) == 1:
         return -1
     else:
         return 1
 
 
-cmp_items_py3 = cmp_to_key(customer_compare)
+cmp_items_py3 = cmp_to_key(custom_compare)
 
 
 class Day13:
@@ -83,7 +83,7 @@ class Day13:
             if y == 1:
                 sub_total += idx
             idx += 1
-        print(self.result_list)
+        # print(self.result_list)
         print(sub_total)
 
     def run_p2(self):
@@ -105,18 +105,19 @@ class Day13:
             # print(y)
         print(sub_total)
 
+
 if __name__ == '__main__':
     # P1
-    # print("p1 sample")
-    # tmp_list_1_s = read_file_arrays("day13_1_s.txt")
-    # p1_s = Day13(tmp_list_1_s)
-    # # p1_s.print_data()
-    # p1_s.run_p1()
+    print("p1 sample")
+    tmp_list_1_s = read_file_arrays("day13_1_s.txt")
+    p1_s = Day13(tmp_list_1_s)
+    # p1_s.print_data()
+    p1_s.run_p1()
     #
-    # print("p1 production")
-    # tmp_list = read_file_arrays("day13.txt")
-    # p1 = Day13(tmp_list)
-    # p1.run_p1()
+    print("p1 production")
+    tmp_list = read_file_arrays("day13.txt")
+    p1 = Day13(tmp_list)
+    p1.run_p1()
     #
     # P2
     print("p2 sample")
