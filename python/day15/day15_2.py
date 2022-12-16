@@ -1,137 +1,113 @@
 from func_utils import read_file_array
+from day15util import convert_line, get_range
 
 
-class Day14:
+class Day15:
     # class variables
     def __init__(self, data_list):
         # instance variables
         self.data_list = data_list
+        self.new_data_list = []
         self.start_x_position = 0
         self.end_x_position = 0
-        self.start_y_position = 600
+        self.start_y_position = 0
         self.end_y_position = 0
-        self.new_data_list = []
         self.result_list = []
-        self.fall_start = [500, 0]
-        self.stop_flag = False
-        self.add_max_y = 300
-        self.add_max_y_right = 300
+        self.max_number = 0
+        self.target_line = 0
 
     def covert_list_data(self):
         for x in self.data_list:
-            tmp_line = list(map(lambda y: list(map(int, y.strip().split(","))), x.split("->")))
-            self.new_data_list.append(tmp_line)
+            self.new_data_list.append(convert_line(x))
         for x in self.new_data_list:
             for y in x:
-                if y[0] < self.start_y_position:
-                    self.start_y_position = y[0]
+                # if y[0] < self.start_y_position:
+                #     self.start_y_position = y[0]
                 if y[0] > self.end_y_position:
                     self.end_y_position = y[0]
+                # if y[1] < self.start_x_position:
+                #     self.start_x_position = y[1]
                 if y[1] > self.end_x_position:
                     self.end_x_position = y[1]
-        self.end_y_position = self.end_y_position + 1 + self.add_max_y + self.add_max_y_right
-        self.end_x_position = self.end_x_position + 1 + 2
-        self.result_list = [[0 for col in range(self.start_y_position, self.end_y_position)] for row in
-                            range(self.end_x_position)]
-        self.result_list[-1] = [2 for col in range(self.start_y_position, self.end_y_position)]
-        # for x in self.result_list:
-        #     print(x)
 
-    def draw_one_step(self, node_s, node_e):
-        if node_s[0] == node_e[0]:
-            # draw x
-            start_x = min(node_s[1], node_e[1])
-            end_x = max(node_s[1], node_e[1]) + 1
-            for idx in range(start_x, end_x):
-                self.result_list[idx][node_s[0] - self.start_y_position + self.add_max_y] = 2
+        if self.end_x_position > self.max_number:
+            self.end_x_position = self.max_number + 1
         else:
-            # draw y
-            start_y = min(node_s[0], node_e[0])
-            end_y = max(node_s[0], node_e[0]) + 1
-            for idy in range(start_y, end_y):
-                self.result_list[node_s[1]][idy - self.start_y_position + self.add_max_y] = 2
+            self.end_x_position += 1
+        if self.end_y_position > self.max_number:
+            self.end_y_position = self.max_number + 1
+        else:
+            self.end_y_position += 1
+        print(self.start_x_position, self.end_x_position, self.start_y_position, self.end_y_position)
+        print("init tables")
 
-    def draw_path(self):
+    def draw_one_node(self, node, data):
+        idx_x = node[1]
+        idx_y = node[0]
+        if idx_x == self.target_line and 0 <= idx_y <= self.max_number:
+            self.result_list.append((idx_y, idx_y, data))
+
+    def draw_sensor_beacon(self):
         for x in self.new_data_list:
-            # print("lenx", len(x))
-            for idy, y in enumerate(x):
-                # print("idy", idy)
-                if idy + 1 < len(x):
-                    self.draw_one_step(x[idy], x[idy + 1])
-        # for x in self.result_list:
-        #     print(x)
+            self.draw_one_node(x[0], 1)
+            self.draw_one_node(x[1], 2)
 
-    def check_down_status(self, idx, idy):
-        if idx + 1 >= self.end_x_position:
-            print("down idx", idx, "idy", idy, "max x", self.end_x_position, "max y", self.end_y_position, "actual x ",
-                  idx + 1, "actual y", idy - self.start_y_position + self.add_max_y)
-            self.stop_flag = True
-            return False
-        if self.result_list[idx + 1][idy - self.start_y_position + self.add_max_y] == 0:
-            return True
-        else:
-            return False
+    def draw_closest(self, node, data=3):
+        idx_x, idx_y, idx_length = get_range(node)
+        if idx_x - idx_length <= self.target_line <= idx_x + idx_length:
+            gap_x = abs(idx_x - self.target_line)
+            gap_y = idx_length - gap_x
+            start_y = idx_y - gap_y if idx_y - gap_y >= 0 else 0
+            end_y = idx_y + gap_y if idx_y + gap_y < self.end_y_position else self.end_y_position
+            self.result_list.append((start_y, end_y, data))
 
-    def check_left_status(self, idx, idy):
-        if idy + self.add_max_y - self.start_y_position - 1 < 0 or idx + 1 >= self.end_x_position:
-            print("left idx", idx, "idy", idy, "max x", self.end_x_position, "max y", self.end_y_position, "actual x ",
-                  idx + 1, "actual y", idy - self.start_y_position - 1 + self.add_max_y)
-            self.stop_flag = True
-            return False
-        if self.result_list[idx + 1][idy - self.start_y_position - 1 + self.add_max_y] == 0:
-            return True
-        else:
-            return False
+    def get_possible_position(self):
+        start_y = self.result_list[0][0]
+        end_y = self.result_list[1][0]
+        poss_posi = -1
 
-    def check_right_status(self, idx, idy):
-        if idy + self.add_max_y + 1 >= self.end_y_position or idx + 1 >= self.end_x_position:
-            print("right left idx", idx, "idy", idy, "max x", self.end_x_position, "max y", self.end_y_position,
-                  "actual x ", idx + 1, "actual y", idy - self.start_y_position + 1 + self.add_max_y)
-            self.stop_flag = True
-            return False
-        if self.result_list[idx + 1][idy - self.start_y_position + 1 + self.add_max_y] == 0:
-            return True
-        else:
-            return False
+        for idx, x in enumerate(self.result_list):
+            if start_y <= x[0] <= end_y + 1:
+                if x[1] > end_y:
+                    end_y = x[1]
+            elif x[0] > end_y + 1:
+                print("find", start_y, x[0])
+                poss_posi = end_y + 1
+                break
+            else:
+                print("error")
+                print(self.result_list)
+        # print(start_y, end_y)
+        return poss_posi
 
-    def check_status(self, idx, idy):
-        if self.check_down_status(idx, idy):
-            result = self.check_status(idx + 1, idy)
-        elif self.check_left_status(idx, idy):
-            result = self.check_status(idx + 1, idy - 1)
-        elif self.check_right_status(idx, idy):
-            result = self.check_status(idx + 1, idy + 1)
-        else:
-            result = [idy, idx]
-        return result
-
-    def get_fall_node(self):
-        return self.check_status(self.fall_start[1], self.fall_start[0])
-
-    def run_p2(self):
+    def run_2(self, line_number):
+        self.max_number = line_number
         self.covert_list_data()
-        self.draw_path()
-        # for x in self.result_list:
-        #     print(x)
-        i = 1
-        while not self.stop_flag and self.result_list[self.fall_start[1]][
-            self.fall_start[0] - self.start_y_position + self.add_max_y] == 0:
-            tmp_node = self.get_fall_node()
-            self.result_list[tmp_node[1]][tmp_node[0] - self.start_y_position + self.add_max_y] = 1
-            i += 1
-        # for x in self.result_list:
-        #     print(x)
-        print("i", i - 1)
+        temp_line = 0
+        while temp_line <= line_number:
+            self.target_line = temp_line
+            self.result_list = []
+            self.draw_sensor_beacon()
+            for x in self.new_data_list:
+                self.draw_closest(x)
+            self.result_list = sorted(self.result_list)
+            result_y = self.get_possible_position()
+            if result_y != -1:
+                break
+            temp_line += 1
+        print(temp_line, result_y)
+        sub_total = result_y * 4000000 + temp_line
+        print(sub_total)
 
 
 if __name__ == '__main__':
     # P2
-    print("p2 sample")
-    tmp_list_2_s = read_file_array("day15_1_s.txt")
-    p2_s = Day14(tmp_list_2_s)
-    p2_s.run_p2()
-    # # #
+    # print("p2 sample")
+    # tmp_list_1_s = read_file_array("day15_1_s.txt")
+    # p2_s = Day15(tmp_list_1_s)
+    # p2_s.run_2(20)
+
     print("p2 production")
     tmp_list = read_file_array("day15.txt")
-    p2 = Day14(tmp_list)
-    p2.run_p2()
+    p2 = Day15(tmp_list)
+    p2.run_2(4000000)
