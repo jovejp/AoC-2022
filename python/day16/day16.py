@@ -40,12 +40,13 @@ def dfs(run_times, start_node):
     # print(tmp_node_path)
     visited = list()
     queue = collections.deque([(run_times, start_node, 0, visited)])
-    result_list = dict()
-
+    # result_list = dict()
+    max_score = 0
     while queue:
         run_times, from_node, curr_score, visited = queue.popleft()
+        max_score = max(max_score, curr_score)
         # result_list.update({curr_score: visited})
-        result_list[tuple(visited)] = max(curr_score, result_list.get(tuple(visited), 0))
+        # result_list[tuple(visited)] = max(curr_score, result_list.get(tuple(visited), 0))
 
         if run_times <= 0:
             continue
@@ -62,7 +63,7 @@ def dfs(run_times, start_node):
             new_score = curr_score + valid_rate_nodes[x] * new_run_times
             # print(new_run_times, x, new_score, new_visited)
             queue.append((new_run_times, x, new_score, new_visited))
-    return result_list
+    return max_score
 
 
 def run(input_data):
@@ -70,17 +71,39 @@ def run(input_data):
     covert_list_data(input_data)
     # print(valid_rate_nodes)
     valid_path_nodes = shortest_move_steps(valid_path_nodes)
-    max_score = max(x for x in dfs(30, "AA").values())
+    max_score = dfs(30, "AA")
     return max_score
+
+
+def dfs_refactory(run_times, start_node):
+    tmp_node_path = [x for x in valid_rate_nodes]
+    valid_state_nodes = {x: 1 << i for i, x in enumerate(valid_rate_nodes)}
+    # print(tmp_node_path)
+    queue = collections.deque([(run_times, start_node, 0, 0)])
+    result_list = dict()
+
+    while queue:
+        run_times, from_node, curr_score, state = queue.popleft()
+        result_list[state] = max(curr_score, result_list.get(state, 0))
+        if run_times <= 0:
+            continue
+        for x in tmp_node_path:
+            new_run_times = run_times - valid_path_nodes[from_node][x] - 1
+            if valid_state_nodes[x] & state or new_run_times <= 0:
+                continue
+            new_score = curr_score + valid_rate_nodes[x] * new_run_times
+            queue.append((new_run_times, x, new_score, valid_state_nodes[x] | state))
+    return result_list
 
 
 def run_2(input_data):
     global tree_nodes, valid_rate_nodes, valid_path_nodes
     covert_list_data(input_data)
     valid_path_nodes = shortest_move_steps(valid_path_nodes)
-    result_list = dfs(26, "AA")
+    result_list = dfs_refactory(26, "AA")
+    print("result_list size:", len(result_list))
     max_score = max(y1 + y2 for x1, y1 in result_list.items()
-                    for x2, y2 in result_list.items() if not set(x1) & set(x2))
+                    for x2, y2 in result_list.items() if not x1 & x2)
     print(max_score)
     return max_score
 
@@ -93,28 +116,28 @@ if __name__ == '__main__':
     p1_s = run(tmp_list_1_s)
     print("pass" if p1_s == 1651 else "failed")
     end = time.perf_counter()
-    print("run time:", (end - start) * 1000, "milliseconds")
-
+    print("run time:", round((end - start) * 1000), "milliseconds")
+    #
     print("p1")
     start = time.perf_counter()
     tmp_list_1 = read_file_array("day16.txt")
     p1 = run(tmp_list_1)
     print(p1)
     end = time.perf_counter()
-    print("run time:", (end - start) * 1000, "milliseconds")
-    # P2
-
+    print("run time:", round((end - start) * 1000), "milliseconds")
+    # # P2
+    #
     print("p2 sample")
     start = time.perf_counter()
     tmp_list_2_s = read_file_array("day16_1_s.txt")
     p2_s = run_2(tmp_list_2_s)
     print("pass" if p2_s == 1707 else "failed")
     end = time.perf_counter()
-    print("run time:", (end - start) * 1000, "milliseconds")
+    print("run time:", round((end - start) * 1000), "milliseconds")
 
     print("p2")
     start = time.perf_counter()
     tmp_list_1 = read_file_array("day16.txt")
     p2 = run_2(tmp_list_1)
     end = time.perf_counter()
-    print("run time:", (end - start) * 1000, "milliseconds")
+    print("run time:", round((end - start) * 1000), "milliseconds")
