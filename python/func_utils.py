@@ -9,7 +9,7 @@ def read_file_arrays(file_name):
             my_main_list.append(my_sub_list)
             my_sub_list = []
         else:
-            my_sub_list.append(line.strip())
+            my_sub_list.append(line)
         line = f.readline()
     my_main_list.append(my_sub_list)
     f.close()
